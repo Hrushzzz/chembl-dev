@@ -1,11 +1,11 @@
 //const express = require("http");  
 import express from "express";
 import cors from "cors";
+import pool from "./db.js";
 // import compoundRoutes from "./routes/compounds.js";
 // import connectToDB from "./database/chemblDB.js";
 // import db from "./db.js";
 // const pool = require("./db");
-import pool from "./db.js"
 
 // creating an Express server
 const app = express();
@@ -28,10 +28,6 @@ app.get("/compounds", async (req, res) => {
 // app.all("*", (req, res) => {
 //     res.status(404).send("Page Not Found..!");
 // })
-
-// app.listen(5010, () => {
-//     console.log("Server is running on port 5010");
-// });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
