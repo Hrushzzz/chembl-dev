@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { AppBar, Toolbar, Typography, InputBase, Box, IconButton } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
 import { styled, alpha } from "@mui/material/styles";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
-import Logo from "../assets/molecule.png"; // Your molecule logo
+import Logo from "../assets/molecule.png";
 
-// Custom Styling for Search Bar
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: "25px",
@@ -30,7 +29,6 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  pointerEvents: "none",
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -47,21 +45,20 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-function Navbar({ onSearch }) {
+const Navbar = ({ onSearch }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useNavigate();
 
-  // Function to fetch search results
   const fetchSearchResults = async () => {
     if (!searchQuery.trim()) return;
 
     try {
       console.log("Fetching data for:", searchQuery);
-      const response = await axios.get(
-        `http://localhost:5000/api/search?query=${searchQuery}`
-      );
+      const response = await axios.get(`http://localhost:5000/api/search`, {
+        params: { query: searchQuery },
+      });
+
       console.log("Received data:", response.data);
-      onSearch(response.data); // Pass data to parent component
+      onSearch(response.data); // Update state in Dashboard
     } catch (error) {
       console.error("Error fetching search results:", error.response?.data || error.message);
     }
@@ -69,6 +66,7 @@ function Navbar({ onSearch }) {
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
+      event.preventDefault();
       fetchSearchResults();
     }
   };
@@ -76,26 +74,15 @@ function Navbar({ onSearch }) {
   return (
     <AppBar position="static" sx={{ backgroundColor: "#4CAF50" }}>
       <Toolbar>
-        {/* Logo + Title */}
         <Box display="flex" alignItems="center" sx={{ flexGrow: 1 }}>
           <Link to="/">
-            <img
-              src={Logo}
-              alt="Logo"
-              style={{ width: "50px", marginRight: "10px" }}
-            />
+            <img src={Logo} alt="Logo" style={{ width: "50px", marginRight: "10px" }} />
           </Link>
-          <Typography
-            variant="h6"
-            component={Link}
-            to="/"
-            sx={{ textDecoration: "none", color: "white", fontWeight: "bold" }}
-          >
+          <Typography variant="h6" component={Link} to="/" sx={{ textDecoration: "none", color: "white", fontWeight: "bold" }}>
             chEMBL Dashboard
           </Typography>
         </Box>
 
-        {/* Search Bar */}
         <Search>
           <StyledInputBase
             placeholder="Search…"
@@ -113,6 +100,6 @@ function Navbar({ onSearch }) {
       </Toolbar>
     </AppBar>
   );
-}
+};
 
 export default Navbar;

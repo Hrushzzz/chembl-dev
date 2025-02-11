@@ -1,31 +1,51 @@
-import React, { useState } from "react";
-import CompoundTable from "./CompoundTable";
-import ChartComponent from "./ChartComponent";
-import Navbar from "./Navbar";
-import { Container, Typography } from "@mui/material";
+// import React, { useState } from "react";
+// import Navbar from "./Navbar";
+// import CompoundTable from "./CompoundTable";
 
-function Dashboard() {
-  const [searchResults, setSearchResults] = useState([]);
+// const Dashboard = () => {
+//   const [compounds, setCompounds] = useState([]);
+//   const [loading, setLoading] = useState(false);
+
+//   const handleSearch = async (query) => {
+//     setLoading(true);
+//     try {
+//       const response = await fetch(`http://localhost:5000/api/search?query=${query}`);
+//       const data = await response.json();
+//       if (response.ok) {
+//         setCompounds(data);
+//       } else {
+//         alert(data.message || "No results found");
+//       }
+//     } catch (error) {
+//       console.error("Error fetching data:", error);
+//     }
+//     setLoading(false);
+//   };
+
+//   return (
+//     <div style={{ padding: "20px" }}>
+//       <Navbar onSearch={setCompounds} />
+//       {loading ? <p>Loading...</p> : <CompoundTable compounds={compounds} />}
+//     </div>
+//   );
+// };
+
+// export default Dashboard;
+
+
+import React, { useState } from "react";
+import Navbar from "./Navbar";
+import CompoundTable from "./CompoundTable";
+
+const Dashboard = () => {
+  const [compounds, setCompounds] = useState([]);
 
   return (
-    <>
-      <Navbar onSearch={setSearchResults} />
-      <Container>
-        <Typography variant="h4" align="center" mt={4}>ChEMBL Compound Dashboard</Typography>
-        
-        {searchResults.length > 0 ? (
-          <>
-            <CompoundTable compounds={searchResults} />
-            <ChartComponent compounds={searchResults} />
-          </>
-        ) : (
-          <Typography variant="h6" align="center" mt={4}>
-            No search results. Use the search bar to find compounds.
-          </Typography>
-        )}
-      </Container>
-    </>
+    <div style={{ padding: "20px" }}>
+      <Navbar onSearch={setCompounds} /> {/* ✅ Pass setCompounds */}
+      <CompoundTable compounds={compounds} /> {/* ✅ Pass compounds */}
+    </div>
   );
-}
+};
 
 export default Dashboard;
