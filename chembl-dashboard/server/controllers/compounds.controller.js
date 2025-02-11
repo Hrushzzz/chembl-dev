@@ -121,3 +121,68 @@ export const getCompoundDetails = async (req, res) => {
       res.status(500).json({ error: "Internal Server Error", details: error.message });
     }
   };
+
+export const getChartData = async (req, res) => {
+    try {
+      console.log("🔥 API Called: /chart-data");
+      console.log("🛠 Filters Received:", req.body);  // ✅ Log received request
+  
+      const {
+        molecularWeightRange = [100, 500],   // Default values
+        logPRange = [-5, 5],
+        clinicalPhase = 3,
+        hbd = 2,
+        hba = 5,
+        moleculeType = "Small molecule",
+        psaRange = [20, 150],
+      } = req.body || {}; // Ensure req.body is not null
+  
+      if (!Array.isArray(molecularWeightRange) || molecularWeightRange.length !== 2) {
+        return res.status(400).json({ error: "Invalid molecularWeightRange format" });
+      }
+      if (!Array.isArray(logPRange) || logPRange.length !== 2) {
+        return res.status(400).json({ error: "Invalid logPRange format" });
+      }
+      if (!Array.isArray(psaRange) || psaRange.length !== 2) {
+        return res.status(400).json({ error: "Invalid psaRange format" });
+      }
+  
+      const sql = `
+        SELECT molecule_dictionary.molecule_type, COUNT(*) as count
+        FROM molecule_dictionary
+        JOIN compound_properties ON molecule_dictionary.molregno = compound_properties.molregno
+        WHERE compound_properties.full_mwt BETWEEN $1 AND $2
+          AND compound_properties.alogp BETWEEN $3 AND $4
+          AND molecule_dictionary.max_phase = $5
+          AND compound_properties.hbd = $6
+          AND compound_properties.hba = $7
+          AND molecule_dictionary.molecule_type = $8
+          AND compound_properties.psa BETWEEN $9 AND $10
+        GROUP BY molecule_dictionary.molecule_type;
+      `;
+  
+      const params = [
+        molecularWeightRange[0], molecularWeightRange[1],
+        logPRange[0], logPRange[1],
+        clinicalPhase, hbd, hba,
+        moleculeType, psaRange[0], psaRange[1]
+      ];
+  
+      console.log("📡 SQL Query Executing:", sql);
+      console.log("🗂️ Query Parameters:", params);
+  
+      const results = await pool.query(sql, params);
+  
+      console.log("✅ SQL Query Results:", results.rows);
+  
+      if (!results.rows || results.rows.length === 0) {
+        return res.status(200).json([]); // Ensure JSON response
+      }
+  
+      res.json(results.rows);
+    } catch (error) {
+      console.error("❌ Error in getChartData:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+  
