@@ -77,3 +77,47 @@ export const getCompoundById = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
+
+// Fetch compound details including molecular structure & properties
+export const getCompoundDetails = async (req, res) => {
+    const { chemblId } = req.params;
+  
+    try {
+      console.log(`🔍 Fetching details for ChEMBL ID: ${chemblId}`);
+  
+      // First, check if the compound exists in molecule_dictionary
+      const checkQuery = `SELECT molregno FROM molecule_dictionary WHERE chembl_id = $1`;
+      const checkResult = await pool.query(checkQuery, [chemblId]);
+  
+      if (checkResult.rows.length === 0) {
+        console.warn(`⚠️ Compound not found: ${chemblId}`);
+        return res.status(404).json({ message: "Compound not found" });
+      }
+  
+      const molregno = checkResult.rows[0].molregno;
+  
+      // Main Query: Fetch compound details
+      const query = `
+        SELECT md.chembl_id, md.pref_name, md.molecule_type, md.max_phase, md.first_approval, 
+               cs.canonical_smiles, cp.full_mwt, cp.alogp, cp.hbd, cp.hba, cp.psa, cp.rtb
+        FROM molecule_dictionary md
+        LEFT JOIN compound_structures cs ON md.molregno = cs.molregno
+        LEFT JOIN compound_properties cp ON md.molregno = cp.molregno
+        WHERE md.molregno = $1
+      `;
+  
+      const result = await pool.query(query, [molregno]);
+  
+      console.log("✅ Query result:", result.rows);
+  
+      if (result.rows.length === 0) {
+        return res.status(404).json({ message: "Compound details not found" });
+      }
+  
+      res.json(result.rows[0]);
+    } catch (error) {
+      console.error("❌ Error fetching compound details:", error);
+      res.status(500).json({ error: "Internal Server Error", details: error.message });
+    }
+  };

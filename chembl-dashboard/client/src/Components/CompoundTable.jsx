@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TableSortLabel, TablePagination } from "@mui/material";
+import { Link } from "react-router-dom"; // Import Link for navigation
 
 const CompoundTable = ({ compounds }) => {
   const [order, setOrder] = useState("asc");
@@ -42,7 +43,11 @@ const CompoundTable = ({ compounds }) => {
           <TableBody>
             {sortedCompounds.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
               <TableRow key={index}>
-                <TableCell>{row.chembl_id}</TableCell>
+                <TableCell>
+                  <Link to={`/compound/${row.chembl_id}`} style={{ textDecoration: "none", color: "#1976d2", fontWeight: "bold" }}>
+                    {row.chembl_id}
+                  </Link>
+                </TableCell>
                 <TableCell>{row.pref_name || "N/A"}</TableCell>
                 <TableCell>{row.max_phase}</TableCell>
                 <TableCell>{row.full_mwt}</TableCell>
