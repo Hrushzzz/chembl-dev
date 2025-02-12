@@ -4,11 +4,11 @@ import axios from "axios";
 import { Card, CardContent, Typography, CircularProgress } from "@mui/material";
 import OCL from "openchemlib/full";
 
-// Function to render 2D molecular structure from SMILES
+// Function to rendering 2D molecular structure
 const renderMolecule = (smiles) => {
   if (!smiles) return "Structure not available";
   const molecule = OCL.Molecule.fromSmiles(smiles);
-  return molecule.toSVG(300, 300); // Render as SVG
+  return molecule.toSVG(300, 300); // Rendering as SVG
 };
 
 const CompoundDetail = () => {
@@ -53,7 +53,6 @@ const CompoundDetail = () => {
         <Typography variant="body2"><b>HBD:</b> {compound.hbd}</Typography>
         <Typography variant="body2"><b>HBA:</b> {compound.hba}</Typography>
         <Typography variant="body2"><b>PSA:</b> {compound.psa}</Typography>
-        <Typography variant="body2"><b>TPSA:</b> {compound.tpsa}</Typography>
         <Typography variant="body2"><b>Rotatable Bonds:</b> {compound.rtb}</Typography>
       </CardContent>
     </Card>

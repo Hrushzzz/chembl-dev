@@ -11,7 +11,8 @@ import {
   TablePagination,
   Button,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate
+import { Link, useNavigate } from "react-router-dom";
+
 
 const CompoundTable = ({ compounds }) => {
   const [order, setOrder] = useState("asc");
@@ -45,7 +46,7 @@ const CompoundTable = ({ compounds }) => {
             <Table>
               <TableHead>
                 <TableRow>
-                  {["chembl_id", "pref_name", "max_phase", "full_mwt", "alogp", "hbd", "hba", "psa", "rtb", "tpsa"].map((column) => (
+                  {["chembl_id", "pref_name", "max_phase", "full_mwt", "alogp", "hbd", "hba", "psa", "rtb"].map((column) => (
                     <TableCell key={column}>
                       <TableSortLabel active={orderBy === column} direction={order} onClick={() => handleRequestSort(column)}>
                         {column.toUpperCase()}
@@ -70,7 +71,6 @@ const CompoundTable = ({ compounds }) => {
                     <TableCell>{row.hba}</TableCell>
                     <TableCell>{row.psa}</TableCell>
                     <TableCell>{row.rtb}</TableCell>
-                    <TableCell>{row.tpsa}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

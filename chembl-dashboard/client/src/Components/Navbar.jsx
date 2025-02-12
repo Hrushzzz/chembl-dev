@@ -58,7 +58,7 @@ const Navbar = ({ onSearch }) => {
       });
 
       console.log("Received data:", response.data);
-      onSearch(response.data); // Update state in Dashboard
+      onSearch(response.data); // Updating state in Dashboard
     } catch (error) {
       console.error("Error fetching search results:", error.response?.data || error.message);
     }
